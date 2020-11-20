@@ -1,46 +1,22 @@
-# Getting Started with Create React App
+This repostiory is based on Material UI Table with sorting and selecting (https://material-ui.com/components/tables/#sorting-amp-selecting) as well as React Beautiful dnd (https://github.com/atlassian/react-beautiful-dnd).
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It should support:
+* flat rows
+* nested rows (2 levels)
+* deep rows (3 or more levels)
 
-## Available Scripts
+When sorting is enabled (try to sort by status or name) the Dnd should be disabled.
 
-In the project directory, you can run:
+It should be possible to drag tasks (from anywhere in the task) both up and down. 
 
-### `yarn start`
+When dragging to the right (where possible depending of the task depth above it) then the task should become a subtask
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+When dragging to the left (where possible), then the task should be unsubtask
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+When a drag is successfully completed (and there is a change), after updating the internal state, make a call to the handle to notify of the change:
+* path - the path of the task being moved
+* toPath - the path to which the task is being moved to (/cl if it is at the top)
+* position - the position within the parent (toPath)
 
-### `yarn test`
+We can provide additional data samples to help validate the implementation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
