@@ -104,7 +104,7 @@ export default function EnhancedTable(props: Props) {
     const [orderBy, setOrderBy] = React.useState<keyof TableData | undefined>()//'name');
     const [selected, setSelected] = React.useState<string[]>([]);
     const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
+    const [dense, setDense] = React.useState(true);
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
 
     const isDndEnabled = orderBy === null // Only allow DnD when there is no sort
