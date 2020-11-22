@@ -28,9 +28,26 @@ function App() {
       const items = Array.from(rows);
       const prevIndex = result.draggableId;
       const prevValue = items[prevIndex];
+      let prevPath = prevValue.path;
+      let toPath = '';
       items.splice(prevIndex, 1);
       items.splice(result.destination.index, 0, prevValue);
-      handleMove(prevValue.path, prevValue.path, result.destination.index)
+      if (name === 'Flat') {
+        toPath = '/cl';
+      }
+      else if (name === 'Nested') {
+        if (items[result.destination.index - 1]) {
+          toPath = items[result.destination.index - 1].path;
+          items[result.destination.index].path = toPath;
+        }
+      }
+      else if (name === 'Deep') {
+        if (items[result.destination.index - 1]) {
+          toPath = items[result.destination.index - 1].path;
+          items[result.destination.index].path = toPath;
+        }
+      }
+      handleMove(prevPath, toPath, result.destination.index);
       setRows([...items])
     } catch (error) {
       // console.log(error)

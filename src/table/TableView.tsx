@@ -168,7 +168,6 @@ export default function EnhancedTable(props: Props) {
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
         :
         rows
-    console.log(orderBy)
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
