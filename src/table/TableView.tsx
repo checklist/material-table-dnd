@@ -12,11 +12,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import EnhancedTableHead from './TablerHeader';
 import EnhancedTableToolbar from './TableToolbar';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 interface Props {
     title: string
     rows: TableData[]
     handleMove: (path: string, toPath: string, position: number) => void
+    onDragEnd: (result: any) => void
 }
 
 export interface TableData {
@@ -98,7 +100,7 @@ export const useTableStyles = makeStyles((theme: Theme) =>
 export default function EnhancedTable(props: Props) {
     const classes = useTableStyles();
 
-    const { rows } = props
+    const { rows, onDragEnd } = props
 
     const [order, setOrder] = React.useState<TableOrder | undefined>()//'asc');
     const [orderBy, setOrderBy] = React.useState<keyof TableData | undefined>()//'name');
@@ -166,7 +168,6 @@ export default function EnhancedTable(props: Props) {
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
         :
         rows
-
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
@@ -188,41 +189,54 @@ export default function EnhancedTable(props: Props) {
                             onRequestSort={handleRequestSort}
                             rowCount={rows.length}
                         />
-                        <TableBody>
-                            {showRows
-                                .map((row, index) => {
-                                    const isItemSelected = isSelected(row.name);
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-
-                                    return (
-                                        <TableRow
-                                            hover
-                                            onClick={(event) => handleClick(event, row.name)}
-                                            role="checkbox"
-                                            aria-checked={isItemSelected}
-                                            tabIndex={-1}
-                                            key={index}
-                                            selected={isItemSelected}
-                                        >
-                                            <TableCell padding="checkbox">
-                                                <Checkbox
-                                                    checked={isItemSelected}
-                                                    inputProps={{ 'aria-labelledby': labelId }}
-                                                />
-                                            </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none" style={{ paddingLeft: (25 * (row.path.split('/').length - 3)) }}>
-                                                {row.name}
-                                            </TableCell>
-                                            <TableCell align="right">{row.status}</TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
+                        <DragDropContext onDragEnd={(result) => { onDragEnd(result) }}>
+                            <Droppable droppableId='row'>
+                                {(provided) => (
+                                    <TableBody {...provided.droppableProps} ref={provided.innerRef}>
+                                        {showRows
+                                            .map((row, index) => {
+                                                const isItemSelected = isSelected(row.name);
+                                                const labelId = `enhanced-table-checkbox-${index}`;
+                                                return (
+                                                    <Draggable key={`${index}`} draggableId={`${index}`} index={index} isDragDisabled={!(orderBy == undefined)}>
+                                                        {(provided, snapshot) => (
+                                                            <TableRow
+                                                                hover
+                                                                onClick={(event) => handleClick(event, row.name)}
+                                                                role="checkbox"
+                                                                aria-checked={isItemSelected}
+                                                                tabIndex={-1}
+                                                                key={index}
+                                                                selected={isItemSelected}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                ref={provided.innerRef}
+                                                            >
+                                                                <TableCell padding="checkbox">
+                                                                    <Checkbox
+                                                                        checked={isItemSelected}
+                                                                        inputProps={{ 'aria-labelledby': labelId }}
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell component="th" id={labelId} scope="row" padding="none" style={{ paddingLeft: (25 * (row.path.split('/').length - 3)) }}>
+                                                                    {row.name}
+                                                                </TableCell>
+                                                                <TableCell style={{ display: `${snapshot.isDragging ? 'none' : ''}` }} align="right">{row.status}</TableCell>
+                                                            </TableRow>
+                                                        )}
+                                                    </Draggable>
+                                                );
+                                            })}
+                                        {emptyRows > 0 && (
+                                            <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                                                <TableCell colSpan={6} />
+                                            </TableRow>
+                                        )}
+                                        {provided.placeholder}
+                                    </TableBody>
+                                )}
+                            </Droppable>
+                        </DragDropContext>
                     </Table>
                 </TableContainer>
                 <TablePagination
